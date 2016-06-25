@@ -5,7 +5,7 @@ addpath(fullfile(pwd,'lib'));
 %% 1. compute globalPb on a BSDS image (5Gb of RAM required)
 clear all; close all; clc;
 
-imgFile = 'data/small2.png';
+imgFile = 'data/small3.jpg';
 outFile = 'data/small_test_gPb.mat';
 
 gPb_orient = globalPb(imgFile, outFile);
@@ -30,26 +30,26 @@ load('data/101087_ucm2.mat','ucm2');
 ucm = ucm2(3:2:end, 3:2:end);
 
 % get the boundaries of segmentation at scale k in range [0 1]
-k = 0.2;
+k = 0.4;
 bdry = (ucm >= k);
 
 % get superpixels at scale k without boundaries:
 labels2 = bwlabel(ucm2 <= k);
 labels = labels2(2:2:end, 2:2:end);
 
-figure;imshow('data/small2.png');
+figure;imshow('data/small3.jpg');
 figure;imshow(ucm);
 imwrite(ucm,'data/small_101_ucm.png');
 figure;imshow(bdry);
 imwrite(bdry,'data/small_102_ucm.png');
 figure;imshow(labels,[]);colormap(jet);
-imwrite(labels, prism,'data/small_103_ucm.png');
+imwrite(labels, prism,'data/small3regions.png');
 
 %% 4. compute globalPb on a large image:
 
 clear all; close all; clc;
 
-imgFile = 'data/small2.png';
+imgFile = 'data/small3.jpg';
 outFile = 'data/small_test_big_gPb.mat';
 
 gPb_orient = globalPb_pieces(imgFile, outFile);

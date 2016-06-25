@@ -76,13 +76,12 @@ def process(path_seg, path_original):
 	# final = np.zeros((height, width), dtype=np.uint8)
 
 	for color in colors:
-		# masked_img = masked_image(img_gray, image_wide_edges, color)
 		masked_img = masked_image(img_gray, img_color, color)
 		edges = edge_detection(masked_img)
+		# masked_img = masked_image(img_gray, image_wide_edges, color)
 		# print edges.shape
 		# final = cv2.bitwise_xor(final, final, mask=edges)
 		# final = np.bitwise_xor(final, edges)
 		cv2.imshow('result', edges)
 		cv2.waitKey(0)
-
 process(sys.argv[1], sys.argv[2])
