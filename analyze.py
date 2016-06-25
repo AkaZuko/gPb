@@ -20,9 +20,24 @@ def masked_image(img_gray, img_color, color_val):
 	return np.asarray(masked_img)
 
 def edge_detection(img):
+	img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
 	blur = cv2.GaussianBlur(img,(3,3),0)
 	edges = cv2.Canny(blur, 300, 400)
-	return edges
+
+	kernel = np.ones((5,5), np.uint8)
+	dilation = cv2.dilate(edges, kernel, iterations = 1)
+
+	im_floodfill = dilation.copy()
+
+	h, w = dilation.shape[:2]
+	mask = np.zeros((h+2, w+2), np.uint8)
+	cv2.floodFill(im_floodfill, mask, (0,0), 255)
+
+	im_floodfill_inv = cv2.bitwise_not(im_floodfill)
+	im_out = dilation | im_floodfill_inv
+
+	final = cv2.Canny(im_out, 300, 400)
+	return np.asarray(final)
 
 def get_control_points(points_list):
 	
