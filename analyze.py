@@ -65,7 +65,7 @@ def process(path_seg, path_original):
 	img_color = cv2.resize(img_color, (width, height), interpolation = cv2.INTER_CUBIC)
 	
 	# image_wide_edges = edge_detection(img_color)
-
+	
 	for row in range(height):
 		for col in range(width):
 			val = img_gray[row][col]
