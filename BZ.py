@@ -69,6 +69,7 @@ class Bezier():
     def gen_curves(self, points):
         points = map(lambda x : np.asarray([ [ x[0] ], [ x[1] ] ]), points)
         CP = self.get_control_points(points, 0, len(points) - 1)
+        
         return CP
 
 
