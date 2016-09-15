@@ -155,26 +155,30 @@ class Segmentation():
 		return img
 
 
-	def edge_detection(self, img):
+	def edge_detection(self, img, color):
 		print '*' * 50
 		print 'edge_detection called'
 		print '*' * 50
 		print
 
-		blur = cv2.GaussianBlur(img,(3,3),0)
-		edges = cv2.Canny(blur, 300, 400)
-		kernel = np.ones((5,5), np.uint8)
-		dilation = cv2.dilate(edges, kernel, iterations = 1)
+		# blur = cv2.GaussianBlur(img,(3,3),0)
+		# edges = cv2.Canny(blur, 300, 400)
+		# kernel = np.ones((5,5), np.uint8)
+		# dilation = cv2.dilate(edges, kernel, iterations = 1)
 		
-		im_floodfill = dilation.copy()
-		h, w = dilation.shape[:2]
-		mask = np.zeros((h+2, w+2), np.uint8)
-		cv2.floodFill(im_floodfill, mask, (0,0), 255)
+		# im_floodfill = dilation.copy()
+		# h, w = dilation.shape[:2]
+		# mask = np.zeros((h+2, w+2), np.uint8)
+		# cv2.floodFill(im_floodfill, mask, (0,0), 255)
 
-		im_floodfill_inv = cv2.bitwise_not(im_floodfill)
-		im_out = dilation | im_floodfill_inv
-		imgg = im_out.copy()
+		# im_floodfill_inv = cv2.bitwise_not(im_floodfill)
+		# im_out = dilation | im_floodfill_inv
+		# imgg = im_out.copy()
+		imgg = img.copy()
+		imgg[img==color] = 255
+		imgg[img!=color] = 0
 
+		# imgg = cv2.blur(imgg, (5,5))
 		cv2.imshow('res', imgg)
 		cv2.waitKey(0)
 
@@ -223,6 +227,13 @@ class Segmentation():
 
 		return Cprime.T[0]
 
+	def draw_image(self, boundary_points, width, height):
+		img = np.zeros((height, width), np.uint8)
+		for point in boundary_points:
+			img[point[0]][point[1]] = 255
+		cv2.imshow('Test Show', img)
+		cv2.waitKey(0)
+
 	def process(self, path_seg, path_original, error_limit):
 		print '*' * 50
 		print 'process called'
@@ -243,19 +254,18 @@ class Segmentation():
 		# img_color = cv2.resize(img_color, (width, height), interpolation = cv2.INTER_CUBIC)
 	
 		colors = np.unique(img_gray)
-
+		print len(colors)
 		for color in colors:
-			masked_img = self.masked_image(img_gray, img_color, color)
-			
-			for boundary_points_ in self.edge_detection(masked_img):
+			# masked_img = self.masked_image(img_gray, img_color, color)
+			for boundary_points_ in self.edge_detection(img_gray, color):
 				
 				if boundary_points_ is None:
 					continue
 				
-				boundary_points_ = np.asarray(map(lambda x : np.asarray([x[1], x[0]]), boundary_points_))
+				# boundary_points_ = np.asarray(map(lambda x : np.asarray([x[1], x[0]]), boundary_points_))
+				# boundary_points_inv = self.make_invariant(boundary_points_)
 
-				boundary_points_inv = self.make_invariant(boundary_points_)
-				points = np.asarray( map(lambda x : np.asarray([ [ x[0] ], [ x[1]] ]), boundary_points_inv) )
+				points = np.asarray( map(lambda x : np.asarray([ [ x[0] ], [ x[1]] ]), boundary_points_ ) )
 				bz = Bezier(error_limit)
 				curves = bz.gen_curves(points, 0 , len(points) - 1)
 
@@ -264,7 +274,8 @@ class Segmentation():
 				# plt.figure(1)
 				# plt.subplot(211)
 				
-				# plt.scatter(boundary_points_inv[:,0], boundary_points_inv[:,1])
+				# self.draw_image(boundary_points_, height, width)
+				# plt.scatter(boundary_points_[:,0], boundary_points_[:,1])
 				# plt.subplot(212)
 				for curve in bz.curves:
 					pts = bz.plotBZ(curve.points)
