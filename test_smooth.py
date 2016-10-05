@@ -230,8 +230,8 @@ class Segmentation():
 		cimg = np.zeros_like(img)
 		cv2.drawContours(cimg, contours, req_contour, color=255, thickness=1)
 
-		cv2.imshow('test',cimg)
-		cv2.waitKey(0)
+		# cv2.imshow('test',cimg)
+		# cv2.waitKey(0)
 
 		for x in xrange(h):
 			for y in xrange(w):
@@ -300,8 +300,8 @@ class Segmentation():
 				plt.clf()
 				plt.xlim(xmax=250); plt.ylim(ymax=250);
 				for curve in bz.curves:
-					# pts = bz.plotBZ(curve.points)
-					# plt.scatter(pts[:,0], pts[:,1], c = u'g')
+					pts = bz.plotBZ(curve.points)
+					plt.scatter(pts[:,0], pts[:,1], c = u'g')
 					plt.scatter(curve.points[:,0], curve.points[:,1], c = u'y')
 				plt.show()
 				
@@ -309,4 +309,4 @@ class Segmentation():
 ss = Segmentation()
 
 # segmented_regions_image, original_image, error
-ss.process(sys.argv[1], sys.argv[2], 2.0)
+ss.process(sys.argv[1], sys.argv[2], 1.999)
